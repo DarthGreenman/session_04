@@ -1,4 +1,4 @@
-/* array_iterator.h */
+п»ї/* array_iterator.h */
 
 #ifndef MY_LIBRARY_ARRAY_ITERATOR_H
 #define MY_LIBRARY_ARRAY_ITERATOR_H
@@ -70,29 +70,29 @@ namespace seq
 		/*****************************************************************************************/
 		Array_iterator& operator+=(const difference_type Offset)
 		{
-			/* Значение n должно находиться в диапазоне представимых
-			 * значений типа difference_type */
+			/* Р—РЅР°С‡РµРЅРёРµ n РґРѕР»Р¶РЅРѕ РЅР°С…РѕРґРёС‚СЊСЃСЏ РІ РґРёР°РїР°Р·РѕРЅРµ РїСЂРµРґСЃС‚Р°РІРёРјС‹С…
+			 * Р·РЅР°С‡РµРЅРёР№ С‚РёРїР° difference_type */
 			ptr_ += Offset;
 			return *this;
 		}
 		Array_iterator operator+(const difference_type Offset) const
 		{
-			/* Значение n должно находиться в диапазоне представимых
-			 * значений типа difference_type */
+			/* Р—РЅР°С‡РµРЅРёРµ n РґРѕР»Р¶РЅРѕ РЅР°С…РѕРґРёС‚СЊСЃСЏ РІ РґРёР°РїР°Р·РѕРЅРµ РїСЂРµРґСЃС‚Р°РІРёРјС‹С…
+			 * Р·РЅР°С‡РµРЅРёР№ С‚РёРїР° difference_type */
 			auto it = *this;
 			it += Offset;
 			return it;
 		}
 		Array_iterator& operator-=(const difference_type Offset) 
 		{
-			/* Значение n должно находиться в диапазоне представимых
-			 * значений типа difference_type */
+			/* Р—РЅР°С‡РµРЅРёРµ n РґРѕР»Р¶РЅРѕ РЅР°С…РѕРґРёС‚СЊСЃСЏ РІ РґРёР°РїР°Р·РѕРЅРµ РїСЂРµРґСЃС‚Р°РІРёРјС‹С…
+			 * Р·РЅР°С‡РµРЅРёР№ С‚РёРїР° difference_type */
 			return *this += -Offset;
 		}
 		Array_iterator operator-(const difference_type Offset) const
 		{
-			/* Значение n должно находиться в диапазоне представимых
-			 * значений типа difference_type */
+			/* Р—РЅР°С‡РµРЅРёРµ n РґРѕР»Р¶РЅРѕ РЅР°С…РѕРґРёС‚СЊСЃСЏ РІ РґРёР°РїР°Р·РѕРЅРµ РїСЂРµРґСЃС‚Р°РІРёРјС‹С…
+			 * Р·РЅР°С‡РµРЅРёР№ С‚РёРїР° difference_type */
 			auto it = *this;
 			it -= Offset;
 			return it;
@@ -111,8 +111,8 @@ namespace seq
 	Array_iterator<T> operator+(const typename Array_iterator<T>::difference_type Offset,
 		const Array_iterator<T>& It)
 	{
-		/* Значение n должно находиться в диапазоне представимых
-		 * значений типа difference_type */
+		/* Р—РЅР°С‡РµРЅРёРµ n РґРѕР»Р¶РЅРѕ РЅР°С…РѕРґРёС‚СЊСЃСЏ РІ РґРёР°РїР°Р·РѕРЅРµ РїСЂРµРґСЃС‚Р°РІРёРјС‹С…
+		 * Р·РЅР°С‡РµРЅРёР№ С‚РёРїР° difference_type */
 		return It + Offset;
 	}
 
@@ -120,7 +120,7 @@ namespace seq
 	typename Array_iterator<T>::difference_type	operator-(const Array_iterator<T>& Left, 
 		const Array_iterator<T>& Right)
 	{
-		/* Существует значение n типа difference_type такое, что first + n == last */
+		/* РЎСѓС‰РµСЃС‚РІСѓРµС‚ Р·РЅР°С‡РµРЅРёРµ n С‚РёРїР° difference_type С‚Р°РєРѕРµ, С‡С‚Рѕ first + n == last */
 		const auto last	= Left.operator->();
 		const auto first = Right.operator->();
 		return std::distance(first, last);

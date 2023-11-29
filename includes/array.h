@@ -1,4 +1,4 @@
-/* array.h */
+﻿/* array.h */
 
 #ifndef MY_LIBRARY_ARRAY_H
 #define MY_LIBRARY_ARRAY_H
