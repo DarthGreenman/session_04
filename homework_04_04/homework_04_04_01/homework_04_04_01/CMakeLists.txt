@@ -12,9 +12,9 @@ set(CATCH2_PATH "${PROJECT_SOURCE_DIR}../../../unit_testing_frameworks/Catch2")
 add_subdirectory(${CATCH2_PATH} Catch2_build)
 
 # Добавьте источник в исполняемый файл этого проекта.
-add_executable (${PROJECT_NAME} "homework_04_04_01.cpp" "homework_04_04_01.h")
+add_executable (homework_04_04_01 "homework_04_04_01.cpp" "homework_04_04_01.h")
 target_link_libraries(${PROJECT_NAME} PRIVATE Catch2::Catch2) #Catch2::Catch2WithMain
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
+  set_property(TARGET homework_04_04_01 PROPERTY CXX_STANDARD 20)
 endif()
