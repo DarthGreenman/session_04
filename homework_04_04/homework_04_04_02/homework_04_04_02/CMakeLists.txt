@@ -1,4 +1,4 @@
-﻿# CMakeList.txt: проект CMake для homework_04_04_01; включите исходный код и определения,
+﻿# CMakeList.txt: проект CMake для homework_04_04_02; включите исходный код и определения,
 # укажите здесь логику для конкретного проекта.
 #
 
@@ -12,7 +12,7 @@ set(CATCH2_PATH "${PROJECT_SOURCE_DIR}../../../unit_testing_frameworks/Catch2")
 add_subdirectory(${CATCH2_PATH} Catch2_build)
 
 # Добавьте источник в исполняемый файл этого проекта.
-add_executable (${PROJECT_NAME} "homework_04_04_01.cpp" "homework_04_04_01.h")
+add_executable (${PROJECT_NAME} "homework_04_04_02.cpp" "homework_04_04_02.h")
 target_link_libraries(${PROJECT_NAME} PRIVATE Catch2::Catch2) #Catch2::Catch2WithMain
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
