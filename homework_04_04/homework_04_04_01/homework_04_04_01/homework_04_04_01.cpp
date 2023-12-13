@@ -37,7 +37,7 @@ TEST_CASE("Testing methods of the netology::List class", "[methods: Empty(), Siz
 	}
 }
 
-int main(int argc, char* argv[])
+int main()
 {
-	return Catch::Session().run(argc, argv);
+	return Catch::Session().run();
 }
