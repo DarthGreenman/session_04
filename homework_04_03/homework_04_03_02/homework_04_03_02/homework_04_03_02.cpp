@@ -27,5 +27,11 @@ int main()
         std::cout << x << ' ';
     }
 
+    std::cout << '\n';
+    const seq::Array<int> numbers(numbers_s.cbegin() + 1, numbers_s.cend() - 1);
+    for (const auto& x : numbers) {
+        std::cout << x << ' ';
+    }
+
     return 0;
 }

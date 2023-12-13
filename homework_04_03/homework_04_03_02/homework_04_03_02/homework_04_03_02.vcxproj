@@ -131,11 +131,6 @@
   <ItemGroup>
     <ClCompile Include="homework_04_03_02.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\includes\array.h" />
-    <ClInclude Include="..\..\..\includes\array_iterator.h" />
-    <ClInclude Include="..\..\..\includes\array_smart.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
