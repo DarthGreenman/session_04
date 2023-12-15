@@ -4,7 +4,7 @@
 
 # Добавляем указанные каталоги к тем, которые компилятор использует
 # для поиска включаемых файлов (list.h)
-set(INCLUDES_PATH "${PROJECT_SOURCE_DIR}../../../includes")
+set(INCLUDES_PATH "${PROJECT_SOURCE_DIR}./lib")
 include_directories(${INCLUDES_PATH})
 
 # Добавляем подкаталог Catch2 в сборку 
