@@ -173,8 +173,8 @@ namespace seq
 				std::uninitialized_move(cbegin(), cend(), temp.First_);
 				My_.swap(temp);
 			}
+			std::construct_at(My_.Last_, Value);
 			++My_.Last_;
-			std::construct_at(&*(My_.Last_ - 1), Value);
 		}
 		
 	private:
