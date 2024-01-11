@@ -137,18 +137,32 @@ namespace seq
 
 		const_iterator begin() const	{ return const_iterator{ My_.First_ }; }
 		const_iterator end() const		{ return const_iterator{ My_.Last_ }; }
-		const_iterator cbegin() const	{ return const_iterator{ My_.First_ }; }	
-		const_iterator cend() const		{ return const_iterator{ My_.Last_ }; }
+		
+		const_iterator cbegin() const	{ return begin(); }
+		const_iterator cend() const		{ return end(); }
 	
 		size_type size() const		{ return static_cast<size_type>(My_.Last_ - My_.First_); }
 		size_type capacity() const	{ return static_cast<size_type>(My_.End_ - My_.First_); }
+
+		const_reference operator[](size_type Pos) const
+		{
+			return My_.First_[Pos];
+		}
+
+		reference operator[](size_type Pos)
+		{
+			return 
+				const_cast<reference>(
+					static_cast<const My_vector&>(*this)[Pos]
+					);
+		}
 
 		const_reference at(size_type Pos) const
 		{
 			if (Pos >= size()) {
 				throw std::out_of_range("Index of an element outside the array.");
 			}
-			return *(My_.First_ + Pos);
+			return operator[](Pos);
 		}
 
 		reference at(size_type Pos)
@@ -166,15 +180,23 @@ namespace seq
 				// нового элемента. Для предовращения "лишних" операций при инициализации
 				// My_vector, создаем объект My_vector_base.
 				const size_type size{ this->size() == 0 ? 1 : this->size() + 1 };
-				My_vector_base<value_type, allocator> temp(My_.Alloc_, size * 3 / 2);
-				// Перенастраиваем размер.
-				temp.Last_ = temp.First_ + this->size();
-				// Копируем в temp данные из this.
-				std::uninitialized_move(cbegin(), cend(), temp.First_);
-				My_.swap(temp);
+				reserve(size * 3 / 2);
 			}
 			std::construct_at(My_.Last_, Value);
 			++My_.Last_;
+		}
+
+		void reserve(size_type Number)
+		{
+			// Вектор заполненный - необходимо перераспределение памяти для добавления
+			// нового элемента. Для предовращения "лишних" операций при инициализации
+			// My_vector, создаем объект My_vector_base.
+			My_vector_base<value_type, allocator> temp(My_.Alloc_, Number);
+			// Перенастраиваем размер.
+			temp.Last_ = temp.First_ + this->size();
+			// Копируем в temp данные из this.
+			std::uninitialized_move(cbegin(), cend(), temp.First_);
+			My_.swap(temp);
 		}
 		
 	private:

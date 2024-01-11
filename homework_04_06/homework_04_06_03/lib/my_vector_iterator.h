@@ -32,7 +32,6 @@ namespace seq
 		using const_reference	= const T&;
 	
 	private:
-		My_vector_iterator() = default;
 		explicit My_vector_iterator(pointer Iter)
 			: Ptr_{ Iter } {}
 	
@@ -45,80 +44,63 @@ namespace seq
 
 		~My_vector_iterator() = default;
 		
-		const_reference operator*() const	{ return *Ptr_; }
-		reference operator*()				
-		{ 
-			return
-				const_cast<reference>(
-					static_cast<const My_vector_iterator&>(*this).operator*()
-					);
-		}
+		reference operator*() const	{ return *Ptr_; }
+		pointer operator->() const	{ return Ptr_; }
 		
-		const_pointer operator->() const	{ return Ptr_; }
-		pointer operator->()				
-		{
-			return 
-				const_cast<pointer>(
-					static_cast<const My_vector_iterator*>(*this)->operator->()
-					);
-		}
-
 		My_vector_iterator& operator++()
 		{
 			++Ptr_;
 			return *this;
 		}
+
 		My_vector_iterator operator++(int)
 		{
-			const My_vector_iterator iter{ *this };
+			const auto iter{ *this };
 			++(*this);
 			return iter;
 		}
+
 		My_vector_iterator& operator--()
 		{
 			--Ptr_;
 			return *this;
 		}
+
 		My_vector_iterator operator--(int)
 		{
-			const My_vector_iterator iter{ *this };
+			const auto iter{ *this };
 			--(*this);
 			return iter;
 		}
 
 		My_vector_iterator& operator+=(const difference_type& Offset)
 		{
-			/* Значение n должно находиться в диапазоне представимых
-			 * значений типа difference_type */
 			Ptr_ += Offset;
 			return *this;
 		}
+
 		My_vector_iterator operator+(const difference_type& Offset) const
 		{
-			/* Значение n должно находиться в диапазоне представимых
-			 * значений типа difference_type */
-			My_vector_iterator iter{ *this };
-			iter += Offset;
-			return iter;
+			auto left{ *this };
+			left += Offset;
+			return left;
 		}
+
 		My_vector_iterator& operator-=(const difference_type& Offset) 
 		{
-			/* Значение n должно находиться в диапазоне представимых
-			 * значений типа difference_type */
 			return *this += -Offset;
 		}
+
 		My_vector_iterator operator-(const difference_type& Offset) const
 		{
-			/* Значение n должно находиться в диапазоне представимых
-			 * значений типа difference_type */
-			My_vector_iterator iter{ *this };
-			iter -= Offset;
-			return iter;
+			auto left{ *this };
+			left -= Offset;
+			return left;
 		}
-		
+
 		const_reference operator[](const difference_type& Offset) const
 		{
-			return *(*this + Offset);
+			return Ptr_[Offset];
 		}
 		
 		reference operator[](const difference_type& Offset)
@@ -136,33 +118,26 @@ namespace seq
 	template<typename T>
 	My_vector_iterator<T> operator+(
 		const typename My_vector_iterator<T>::difference_type& Offset,
-		const My_vector_iterator<T>& Iter
+		const My_vector_iterator<T>& Right
 		)
 	{
-		/* Значение n должно находиться в диапазоне представимых
-		 * значений типа difference_type */
-		return Iter + Offset;
-	}	
-	
+		return Right + Offset;
+	}
+
 	template<typename T>
 	typename My_vector_iterator<T>::difference_type operator-(
 		const My_vector_iterator<T>& Left, 
 		const My_vector_iterator<T>& Right
 		)
 	{
-		/* Существует значение n типа difference_type такое, что first + n == last */
-		const typename My_vector_iterator<T>::const_pointer last	= &*Left;
-		const typename My_vector_iterator<T>::const_pointer first	= &*Right;
-		return std::distance(first, last);
+		return &*Left - &*Right;
 	}
-	
+
 	template<typename T>
 	bool operator==(const My_vector_iterator<T>& Lhs, 
 		const My_vector_iterator<T>& Rhs)
 	{
-		const typename My_vector_iterator<T>::const_pointer lhs	= &*Lhs;
-		const typename My_vector_iterator<T>::const_pointer rhs	= &*Rhs;
-		return lhs == rhs;
+		return &*Lhs == &*Rhs;
 	}
 
 	template<typename T>
@@ -176,18 +151,14 @@ namespace seq
 	bool operator<(const My_vector_iterator<T>& Lhs, 
 		const My_vector_iterator<T>& Rhs)
 	{
-		const typename My_vector_iterator<T>::const_pointer lhs	= &*Lhs;
-		const typename My_vector_iterator<T>::const_pointer rhs	= &*Rhs;
-		return lhs < rhs;
+		return &*Lhs < &*Rhs;
 	}
 
 	template<typename T>
 	bool operator>(const My_vector_iterator<T>& Lhs, 
 		const My_vector_iterator<T>& Rhs)
 	{
-		const typename My_vector_iterator<T>::const_pointer lhs	= &*Lhs;
-		const typename My_vector_iterator<T>::const_pointer rhs	= &*Rhs;
-		return lhs > rhs;
+		return &*Lhs > &*Rhs;
 	}
 
 	template<typename T>
