@@ -64,6 +64,7 @@ namespace seq
     template<typename Iter>
     My_unique_vector<Iter> make_unique_vector(Iter First, Iter Last)
     {
+        assert(std::is_sorted(First, Last) && "Array not sorted.");
         My_vector<typename std::iterator_traits<Iter>::value_type> vec;
         vec.reserve(Last - First);
         
