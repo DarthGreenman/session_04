@@ -13,7 +13,9 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <utility>
+#include <concepts>
 
 #define _EXCEPTION_TEST
 
@@ -33,12 +35,16 @@ namespace seq
 	// Создает массив объектов типа T и инициализирует массив элементами типа T
 	// массива источника в выделенном неинициализированном хранилище, на которое
 	// указывает Ptr, используя глобальное размещение - new.
-	template<typename InputIt, typename OutputIt>
-	void my_uninitialized_copy(InputIt First, InputIt Last, OutputIt t_First);
+	template<typename Iter, typename OutputIt>
+	void my_uninitialized_copy(Iter First, Iter Last, OutputIt t_First);
 	// НЕ ИСПОЛЬЗУЮТСЯ - КОНЕЦ
 
 	template<typename T, typename A>
 	void swap(My_vector<T, A>& Lhs, My_vector<T, A>& Rhs) noexcept;
+
+	template<typename T>
+	concept InputIteratorType = std::input_iterator<T> ||
+		std::is_pointer<T>::value;
 
 	template<typename T, typename A = std::allocator<T>>
 	class My_vector
@@ -72,9 +78,8 @@ namespace seq
 		}
 		
 		My_vector(const My_vector& Other) :
-			My_{ Other.My_.Alloc_, Other.size() }
+			My_vector(Other.cbegin(), Other.cend(), Other.My_.Alloc_)
 		{
-			std::uninitialized_copy(Other.cbegin(), Other.cend(), iterator{My_.First_});
 		}		
 		
 		My_vector& operator=(const My_vector& Other)
@@ -108,8 +113,9 @@ namespace seq
 			return *this;
 		}
 		
-		My_vector(My_vector&& Movable) noexcept : 
-			My_vector()	{
+		My_vector(My_vector&& Movable) noexcept :  
+			My_vector()
+		{
 			seq::swap(*this, Movable);
 		}
 		
@@ -119,16 +125,23 @@ namespace seq
 			return *this;
 		}
 		
-		My_vector(const std::initializer_list<value_type>& List, 
-			const allocator& Alloc = allocator{}) :
-			My_{ Alloc, List.size() }
+		My_vector(const std::initializer_list<value_type>& List,
+			const allocator& Alloc = allocator{}) : 
+			My_vector(List.begin(), List.end(), Alloc)
 		{
-			std::uninitialized_copy(List.begin(), List.end(), iterator{My_.First_});
+		}
+
+		template<typename Iter>
+			requires InputIteratorType<Iter>
+		My_vector(Iter First, Iter Last, const allocator& Alloc = allocator{}) :
+			My_{ Alloc, static_cast<size_type>(Last - First) }
+		{
+			std::uninitialized_copy(First, Last, iterator{ My_.First_ });
 		}
 				
 		~My_vector() {
-			for (auto current = begin(); current != end(); ++current) {
-				std::destroy_at(&*current);
+			for (auto first = begin(); first != end(); ++first) {
+				std::destroy_at(&*first);
 			}
 		}
 		
@@ -236,8 +249,8 @@ namespace seq
 		}
 	}
 	
-	template<typename InputIt, typename OutputIt>
-	void my_uninitialized_copy(InputIt First, InputIt Last, OutputIt t_First)
+	template<typename Iter, typename OutputIt>
+	void my_uninitialized_copy(Iter First, Iter Last, OutputIt t_First)
 	{
 		auto current{ t_First };
 		try {
