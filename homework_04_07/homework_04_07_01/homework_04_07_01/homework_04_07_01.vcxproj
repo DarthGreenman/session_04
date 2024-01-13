@@ -138,6 +138,8 @@
     <ClCompile Include="homework_04_07_01.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\lib\my_algorithms.h" />
+    <ClInclude Include="..\lib\my_utilities.h" />
     <ClInclude Include="..\lib\my_vector.h" />
     <ClInclude Include="..\lib\my_vector_base.h" />
     <ClInclude Include="..\lib\my_vector_iterator.h" />

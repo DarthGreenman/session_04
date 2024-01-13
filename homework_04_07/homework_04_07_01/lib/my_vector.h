@@ -6,45 +6,25 @@
 #include "my_vector_base.h"
 #include "my_vector_iterator.h"
 
-#include <exception>
 #include <initializer_list>
-#include <iostream>
 #include <iterator>
 #include <memory>
 #include <stdexcept>
-#include <string>
 #include <type_traits>
-#include <utility>
-#include <concepts>
-
-#define _EXCEPTION_TEST
-
-#ifdef EXCEPTION_TEST
-#define MY_CALL_BAD_ALLOC throw std::bad_alloc()
-#endif // EXCEPTION_TEST
 
 namespace seq
 {
-	// НЕ ИСПОЛЬЗУЮТСЯ - НАЧАЛО
-	// Создает массив объектов типа T и инициализирует объекты значением типа T
-	// в выделенном неинициализированном хранилище, на которое указывает Ptr,
-	// используя глобальное размещение - new.
-	template<typename OutputIt, typename T>
-	void my_uninitialized_fill(OutputIt First, OutputIt Last, const T& Value);
-
-	// Создает массив объектов типа T и инициализирует массив элементами типа T
-	// массива источника в выделенном неинициализированном хранилище, на которое
-	// указывает Ptr, используя глобальное размещение - new.
-	template<typename Iter, typename OutputIt>
-	void my_uninitialized_copy(Iter First, Iter Last, OutputIt t_First);
-	// НЕ ИСПОЛЬЗУЮТСЯ - КОНЕЦ
-
-	template<typename T, typename A>
-	void swap(My_vector<T, A>& Lhs, My_vector<T, A>& Rhs) noexcept;
-
 	template<typename T>
 	concept InputIteratorType = std::input_iterator<T> ||
 		std::is_pointer<T>::value;
+
+	template<typename Iter>
+	using Value_type = typename std::iterator_traits<Iter>::value_type;
+
+	template<typename T, typename A>
+	void swap(My_vector<T, A>& Lhs, My_vector<T, A>& Rhs) noexcept {
+		Lhs.swap(Rhs);
+	}
 
 	template<typename T, typename A = std::allocator<T>>
 	class My_vector
@@ -225,53 +205,3 @@ namespace seq
 	};
 }
 #endif /* MY_LIBRARY_VECTOR_H */
-
-namespace seq
-{
-	// НЕ ИСПОЛЬЗУЮТСЯ - НАЧАЛО
-	template<typename OutputIt, typename T>
-	void my_uninitialized_fill(OutputIt First, OutputIt Last, const T& Value)
-	{
-		auto current{ First };
-		try {
-		#ifdef EXCEPTION_TEST
-			MY_CALL_BAD_ALLOC;
-		#endif /* EXCEPTION_TEST */
-			for (; current != Last; ++current) {
-				std::construct_at(&*current, Value);
-			}
-		}
-		catch (const std::bad_alloc&) {
-			for (; First != current; ++First) {
-				std::destroy_at(&*First);
-			}
-			throw;
-		}
-	}
-	
-	template<typename Iter, typename OutputIt>
-	void my_uninitialized_copy(Iter First, Iter Last, OutputIt t_First)
-	{
-		auto current{ t_First };
-		try {
-		#ifdef EXCEPTION_TEST
-			MY_CALL_BAD_ALLOC;
-		#endif /* EXCEPTION_TEST */
-			for (; First != Last; ++First, ++current) {
-				std::construct_at(&*current, *First);
-			}
-		}
-		catch (const std::bad_alloc&) {
-			for (; t_First != current; ++t_First) {
-				std::destroy_at(&*First);
-			}
-			throw;
-		}
-	}
-	// НЕ ИСПОЛЬЗУЮТСЯ - КОНЕЦ
-
-	template<typename T, typename A>
-	void swap(My_vector<T, A>& Lhs, My_vector<T, A>& Rhs) noexcept {
-		Lhs.swap(Rhs);
-	}
-}
