@@ -1,4 +1,4 @@
-﻿/* my_vector_base.h */
+﻿// my_vector_base.h
 
 #ifndef MY_LIBRARY_VECTOR_BASE_H
 #define MY_LIBRARY_VECTOR_BASE_H
@@ -53,9 +53,10 @@ namespace seq
 
 		void swap(My_vector_base& Other) noexcept
 		{
-			std::swap(First_,	Other.First_);
-			std::swap(Last_,	Other.Last_);
-			std::swap(End_,		Other.End_);
+			using std::swap; // Делаем возможным выроб лучшего кандидата
+			swap(First_,	Other.First_);
+			swap(Last_,		Other.Last_);
+			swap(End_,		Other.End_);
 		}		
 
 	private:
@@ -66,4 +67,4 @@ namespace seq
 	};
 }
 
-#endif /* MY_LIBRARY_VECTOR_BASE_H */
+#endif // MY_LIBRARY_VECTOR_BASE_H

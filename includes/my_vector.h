@@ -1,8 +1,9 @@
-﻿/* my_vector.h */
+﻿// my_vector.h
 
 #ifndef MY_LIBRARY_VECTOR_H
 #define MY_LIBRARY_VECTOR_H
 
+#include "my_types.h"
 #include "my_vector_base.h"
 #include "my_vector_iterator.h"
 
@@ -14,13 +15,6 @@
 
 namespace seq
 {
-	template<typename T>
-	concept InputIteratorType = std::input_iterator<T> ||
-		std::is_pointer<T>::value;
-
-	template<typename Iter>
-	using Value_type = typename std::iterator_traits<Iter>::value_type;
-
 	template<typename T, typename A>
 	void swap(My_vector<T, A>& Lhs, My_vector<T, A>& Rhs) noexcept {
 		Lhs.swap(Rhs);
@@ -69,8 +63,8 @@ namespace seq
 			}
 
 			if (const size_type new_size{ Other.size() }; capacity() < new_size) {
-				My_vector temp{ Other };
-				seq::swap(*this,  temp);
+				My_vector tmp{ Other };
+				seq::swap(*this,  tmp);
 			}
 			else { // Вместимость правопреемника позволяет принять значение без переаллокации.
 				if (const size_type size{ this->size() }; size < new_size) {
@@ -96,12 +90,14 @@ namespace seq
 		My_vector(My_vector&& Movable) noexcept :  
 			My_vector()
 		{
-			seq::swap(*this, Movable);
+			using std::swap; // Делаем возможным выроб лучшего кандидата
+			swap(*this, Movable);
 		}
 		
 		My_vector& operator=(My_vector&& Movable) noexcept
 		{
-			seq::swap(*this, Movable);
+			using std::swap; // Делаем возможным выроб лучшего кандидата
+			swap(*this, Movable);
 			return *this;
 		}
 		
@@ -112,7 +108,7 @@ namespace seq
 		}
 
 		template<typename Iter>
-			requires InputIteratorType<Iter>
+			requires Input_iterator<Iter>
 		My_vector(Iter First, Iter Last, const allocator& Alloc = allocator{}) :
 			My_{ Alloc, static_cast<size_type>(Last - First) }
 		{
@@ -184,24 +180,25 @@ namespace seq
 			// Вектор заполненный - необходимо перераспределение памяти для добавления
 			// нового элемента. Для предовращения "лишних" операций при инициализации
 			// My_vector, создаем объект My_vector_base.
-			My_vector_base<value_type, allocator> temp(My_.Alloc_, Number);
+			My_vector_base<value_type, allocator> tmp(My_.Alloc_, Number);
 			// Перенастраиваем размер.
-			temp.Last_ = temp.First_ + this->size();
+			tmp.Last_ = tmp.First_ + this->size();
 			// Копируем в temp данные из this.
-			std::uninitialized_move(cbegin(), cend(), temp.First_);
-			My_.swap(temp);
+			std::uninitialized_move(cbegin(), cend(), tmp.First_);
+			My_.swap(tmp);
 		}
 		
 	private:
 		void swap(My_vector& Other) noexcept
 		{
-			std::swap(My_.First_,	Other.My_.First_);
-			std::swap(My_.Last_,	Other.My_.Last_);
-			std::swap(My_.End_,		Other.My_.End_);
+			using std::swap; // Делаем возможным выроб лучшего кандидата
+			swap(My_.First_,	Other.My_.First_);
+			swap(My_.Last_,		Other.My_.Last_);
+			swap(My_.End_,		Other.My_.End_);
 		}
 
 	private:
 		My_vector_base<value_type, allocator> My_{};
 	};
 }
-#endif /* MY_LIBRARY_VECTOR_H */
+#endif // MY_LIBRARY_VECTOR_H

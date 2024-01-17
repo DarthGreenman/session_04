@@ -1,4 +1,4 @@
-﻿/* my_vector_iterator.h */
+﻿// my_vector_iterator.h
 
 #ifndef MY_LIBRARY_VECTOR_ITERATOR_H
 #define MY_LIBRARY_VECTOR_ITERATOR_H
@@ -33,7 +33,7 @@ namespace seq
 	
 	private:
 		explicit My_vector_iterator(pointer Iter)
-			: Ptr_{ Iter } {}
+			: Current_{ Iter } {}
 	
 	public:
 		My_vector_iterator(const My_vector_iterator&)				= default;
@@ -44,46 +44,46 @@ namespace seq
 
 		~My_vector_iterator() = default;
 		
-		reference operator*() const	{ return *Ptr_; }
-		pointer operator->() const	{ return Ptr_; }
+		reference operator*() const	{ return *Current_; }
+		pointer operator->() const	{ return Current_; }
 		
 		My_vector_iterator& operator++()
 		{
-			++Ptr_;
+			++Current_;
 			return *this;
 		}
 
 		My_vector_iterator operator++(int)
 		{
-			const auto iter{ *this };
+			auto tmp{ *this };
 			++(*this);
-			return iter;
+			return tmp;
 		}
 
 		My_vector_iterator& operator--()
 		{
-			--Ptr_;
+			--Current_;
 			return *this;
 		}
 
 		My_vector_iterator operator--(int)
 		{
-			const auto iter{ *this };
+			auto tmp{ *this };
 			--(*this);
-			return iter;
+			return tmp;
 		}
 
 		My_vector_iterator& operator+=(const difference_type& Offset)
 		{
-			Ptr_ += Offset;
+			Current_ += Offset;
 			return *this;
 		}
 
 		My_vector_iterator operator+(const difference_type& Offset) const
 		{
-			auto left{ *this };
-			left += Offset;
-			return left;
+			auto tmp{ *this };
+			tmp += Offset;
+			return tmp;
 		}
 
 		My_vector_iterator& operator-=(const difference_type& Offset) 
@@ -93,14 +93,14 @@ namespace seq
 
 		My_vector_iterator operator-(const difference_type& Offset) const
 		{
-			auto left{ *this };
-			left -= Offset;
-			return left;
+			auto tmp{ *this };
+			tmp -= Offset;
+			return tmp;
 		}
 
 		const_reference operator[](const difference_type& Offset) const
 		{
-			return Ptr_[Offset];
+			return Current_[Offset];
 		}
 		
 		reference operator[](const difference_type& Offset)
@@ -112,7 +112,7 @@ namespace seq
 		}
 		
 	private:
-		pointer Ptr_{};
+		pointer Current_{};
 	};
 
 	template<typename T>
@@ -176,4 +176,4 @@ namespace seq
 	}
 }
 
-#endif /* MY_LIBRARY_VECTOR_ITERATOR_H */
+#endif // MY_LIBRARY_VECTOR_ITERATOR_H

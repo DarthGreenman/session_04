@@ -3,10 +3,14 @@
 #ifndef MY_LIBRARY_MEMORY_H
 #define MY_LIBRARY_MEMORY_H
 
+#include "my_types.h"
+
 #include <exception>
 #include <iterator>
 #include <memory>
 #include <type_traits>
+#include <exception>
+#include <concepts>
 
 #ifdef EXCEPTION_TEST
 #define MY_CALL_BAD_ALLOC throw std::bad_alloc()
@@ -15,24 +19,71 @@
 namespace seq
 {
 	template<typename T>
-	concept InputIterator = std::input_iterator<T> ||
-		std::is_pointer<T>::value;
+	class My_unique_ptr
+	{
+	public:
+		using element_type	= T;
+		using pointer		= T*;
+		using reference		= T&;
 
-	template<typename I, typename T>
-	concept OutputIterator = std::output_iterator<I, T>;
+		constexpr My_unique_ptr() noexcept = default;
+		explicit My_unique_ptr(pointer Ptr) noexcept
+			: Current_{ Ptr }
+		{}
 
-	template<typename Iter>
-	using Value_type = typename std::iterator_traits<Iter>::value_type;
+		// Копирование дискриптора данных запрещенно!
+		My_unique_ptr(const My_unique_ptr&)				= delete;
+		My_unique_ptr& operator=(const My_unique_ptr&)	= delete;
 
+		My_unique_ptr(My_unique_ptr&&)				= default;
+		My_unique_ptr& operator=(My_unique_ptr&)	= default;
+
+		~My_unique_ptr() noexcept
+		{
+			if (Current_) {
+				delete Current_;
+			}
+		}
+
+		// Возвращает объект, принадлежащий *this, эквивалентно *get().
+		reference operator*() const noexcept { return *get(); }
+		
+		// Возвращает указатель только на объект (классы или структуры),
+		// принадлежащий *this, т.е. get().
+		pointer operator->() const noexcept { return get(); }
+		
+		// Возвращает указатель на управляемый объект или nullptr,
+		// если объекту не принадлежит указатель.
+		pointer get() const noexcept { return Current_; }
+
+		// Учитывая current_ptr, указатель, которым управлял *this,
+		// выполняет следующие действия в указанном порядке:
+		// 1. Сохраняет копию текущего указателя Current_ в old.
+		// 2. Перезаписывает текущий указатель с аргументом Current_ = New.
+		// 3. Если старый указатель (oll) был непустым, удаляет ранее управляемый объект
+		//    if (old) delete old.
+		void reset(pointer New) noexcept
+		{
+			auto old = Current_; 
+			Current_ = New;
+			if (old) {
+				delete old;
+			}
+		}
+
+	private:
+		pointer Current_{};
+	};
+		
 	// Создает массив объектов типа T и инициализирует объекты значением типа T
 	// в выделенном неинициализированном хранилище, на которое указывает Ptr,
 	// используя глобальное размещение - new.
-	template<typename InputIter>
-		requires InputIterator<InputIter>
-	void my_uninitialized_fill(InputIter First, InputIter Last, 
-		const Value_type<InputIter>& Value)
+	template<typename Input_iter>
+		requires Input_iterator<Input_iter>
+	void my_uninitialized_fill(Input_iter First, Input_iter Last, 
+		const Value_type<Input_iter>& Value)
 	{
-		InputIter current{ First };
+		Input_iter current{ First };
 		try {
 			for (; current != Last; ++current) 
 			{
@@ -52,12 +103,12 @@ namespace seq
 
 	// Создает массив объектов типа T и инициализирует массив элементами типа T
 	// массива источника в выделенном неинициализированном хранилище, на которое
-	// указывает Ptr, используя глобальное размещение - new.
-	template<typename InputIter, typename OutputIter>
-		requires InputIterator<InputIter> && OutputIterator<OutputIter, Value_type<InputIter>>
-	void my_uninitialized_copy(InputIter First, InputIter Last, OutputIter t_First)
+	// указывает Ptr, используя глобальное размещение - new. 
+	template<typename Input_iter, typename Output_iter>
+		requires Input_iterator<Input_iter> && Output_iterator<Output_iter, Value_type<Input_iter>>
+	void my_uninitialized_copy(Input_iter First, Input_iter Last, Output_iter t_First)
 	{
-		OutputIter current{ t_First };
+		Output_iter current{ t_First };
 		try {
 			for (; First != Last; ++First, ++current)
 			{
